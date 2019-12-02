@@ -1,51 +1,16 @@
-import day1 from './src/day1';
-import day2 from './src/day2';
-// import day3 from './src/day3';
-// import day4 from './src/day4';
-// import day5 from './src/day5';
-// import day6 from './src/day6';
-// import day7 from './src/day7';
-// import day8 from './src/day8';
-// import day9 from './src/day9';
-// import day10 from './src/day10';
-// import day11 from './src/day11';
-// import day12 from './src/day12';
-// import day13 from './src/day13';
-// import day14 from './src/day14';
-// import day15 from './src/day15';
-// import day16 from './src/day16';
-// import day17 from './src/day17';
-// import day18 from './src/day18';
-// import day19 from './src/day19';
-// import day20 from './src/day20';
-// import day21 from './src/day21';
-// import day22 from './src/day22';
-// import day23 from './src/day23';
-// import day24 from './src/day24';
-// import day25 from './src/day25';
+async function runDay(day: number): Promise<void> {
+  const module = await import(`./src/day${day}`);
+  module.default();
+}
 
-day1();
-day2();
-// day3();
-// day4();
-// day5();
-// day6();
-// day7();
-// day8();
-// day9();
-// day10();
-// day11();
-// day12();
-// day13();
-// day14();
-// day15();
-// day16();
-// day17();
-// day18();
-// day19();
-// day20();
-// day21();
-// day22();
-// day23();
-// day24();
-// day25();
+async function runAllDays(): Promise<void> {
+  for (let day = 1; day <= 25; day++) {
+    try {
+      await runDay(day);
+    } catch {}
+  }
+}
+
+const day = process.argv[2];
+if (day) runDay(+day);
+else runAllDays();
