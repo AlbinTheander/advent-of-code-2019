@@ -1,5 +1,5 @@
 import day1 from './src/day1';
-// import day2 from './src/day2';
+import day2 from './src/day2';
 // import day3 from './src/day3';
 // import day4 from './src/day4';
 // import day5 from './src/day5';
@@ -25,7 +25,7 @@ import day1 from './src/day1';
 // import day25 from './src/day25';
 
 day1();
-// day2();
+day2();
 // day3();
 // day4();
 // day5();
