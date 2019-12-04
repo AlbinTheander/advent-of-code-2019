@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readData } from '../util/file';
 
 function parseData(s: string): number[] {
   return s.match(/\d+/g).map(Number);
@@ -22,7 +22,7 @@ function* numbers(from: number, to: number): Generator<number, undefined, undefi
 }
 
 export default function run(): void {
-  const [min, max] = parseData(readFileSync('./data/day4.txt', 'utf-8'));
+  const [min, max] = parseData(readData('day4.txt'));
   const answer1 = [...numbers(min, max)].filter(hasDoubleDigit).filter(isInOrder);
   const answer2 = [...numbers(min, max)].filter(hasExactlyDoubleDigit).filter(isInOrder);
 

@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readData } from '../util/file';
 
 function parseData(s: string): number[] {
   return s
@@ -28,7 +28,7 @@ function part2(modules: number[]): number {
 }
 
 export default function run(): void {
-  const modules = parseData(readFileSync('./data/day1.txt', 'utf-8'));
+  const modules = parseData(readData('day1.txt'));
 
   console.log('-- Day 1');
   console.log('The estimated amount of fuel is', part1(modules));

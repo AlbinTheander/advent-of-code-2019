@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readData } from '../util/file';
 
 function parseData(s: string): number[] {
   return s.match(/[-\d]+/g).map(Number);
@@ -50,7 +50,7 @@ function part2(data: number[]): number {
 }
 
 export default function run(): void {
-  const data = parseData(readFileSync('./data/day2.txt', 'utf-8'));
+  const data = parseData(readData('day2.txt'));
   const answer1 = part1(data);
   const answer2 = part2(data);
   console.log('-- Day 2');

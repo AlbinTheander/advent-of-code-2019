@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readData } from '../util/file';
 
 type Step = { direction: string; length: number };
 type Wire = Step[];
@@ -67,7 +67,7 @@ function part2(wires: Wire[]): number {
 }
 
 export default function run(): void {
-  const data = parseData(readFileSync('./data/day3.txt', 'utf-8'));
+  const data = parseData(readData('day3.txt'));
   const answer1 = part1(data);
   const answer2 = part2(data);
 
