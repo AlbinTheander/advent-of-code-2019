@@ -1,48 +1,32 @@
 import { readData } from '../util/file';
+import { createComputer, runUntilHalted } from '../intcode';
 
 function parseData(s: string): number[] {
   return s.match(/[-\d]+/g).map(Number);
 }
 
-function execute(memory: number[]): void {
-  let ip = 0;
-  const ADD = 1;
-  const MUL = 2;
-  const HALT = 99;
-  while (memory[ip] !== HALT) {
-    const op = memory[ip++];
-    const a = memory[ip++];
-    const b = memory[ip++];
-    const c = memory[ip++];
-    switch (op) {
-      case ADD:
-        memory[c] = memory[a] + memory[b];
-        break;
-      case MUL:
-        memory[c] = memory[a] * memory[b];
-        break;
-      default:
-        throw Error('Unknown opcode ' + op);
-    }
-  }
+function runWithIndata(program: number[], noun: number, verb: number): number {
+  const memory = program.slice();
+  memory[1] = noun;
+  memory[2] = verb;
+  const computer = createComputer(memory);
+  runUntilHalted(computer);
+  return computer.memory[0];
 }
 
-function part1(original: number[]): number {
-  const memory = original.slice();
-  memory[1] = 12;
-  memory[2] = 2;
-  execute(memory);
-  return memory[0];
+function part1(program: number[]): number {
+  return runWithIndata(program, 12, 2);
 }
 
-function part2(data: number[]): number {
+function part2(program: number[]): number {
   for (let noun = 0; noun < 100; noun++)
     for (let verb = 0; verb < 100; verb++) {
-      const memory = data.slice();
+      const memory = program.slice();
       memory[1] = noun;
       memory[2] = verb;
-      execute(memory);
-      if (memory[0] === 19690720) {
+      const computer = createComputer(memory);
+      runUntilHalted(computer);
+      if (computer.memory[0] === 19690720) {
         return noun * 100 + verb;
       }
     }
