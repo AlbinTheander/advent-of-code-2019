@@ -10,23 +10,24 @@ fun parseData(s: String) = s
     .filter(String::isNotBlank)
     .map(String::toInt)
 
-fun part1(program: List<Int>): Int {
+
+fun runWith(program: List<Int>, noun: Int, verb: Int): Int {
     val prog = program.toMutableList()
-    prog[1] = 12
-    prog[2] = 2
-    val computer = Computer(prog)
-    computer.run()
+    prog[1] = noun
+    prog[2] = verb
+    val computer = Computer(prog).also { it.run() }
     return computer.program[0]
+}
+
+fun part1(program: List<Int>): Int {
+    return runWith(program, 12, 2)
 }
 
 fun part2(program: List<Int>): Int {
     for (noun in 0..100)
         for (verb in 0..100) {
-            val prog = program.toMutableList()
-            prog[1] = noun
-            prog[2] = verb
-            val computer = Computer(prog).also { it.run() }
-            if (computer.program[0] == 19690720) return 100 * noun + verb
+            val result = runWith(program, noun, verb)
+            if (result == 19690720) return 100 * noun + verb
         }
     return -1
 }
