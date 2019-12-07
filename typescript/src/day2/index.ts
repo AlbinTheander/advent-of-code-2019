@@ -1,5 +1,5 @@
 import { readData } from '../util/file';
-import { createComputer, runUntilHalted } from '../intcode';
+import { createComputer, runComputer } from '../intcode';
 
 function parseData(s: string): number[] {
   return s.match(/[-\d]+/g).map(Number);
@@ -10,7 +10,7 @@ function runWithIndata(program: number[], noun: number, verb: number): number {
   memory[1] = noun;
   memory[2] = verb;
   const computer = createComputer(memory);
-  runUntilHalted(computer);
+  runComputer(computer);
   return computer.memory[0];
 }
 
@@ -25,7 +25,7 @@ function part2(program: number[]): number {
       memory[1] = noun;
       memory[2] = verb;
       const computer = createComputer(memory);
-      runUntilHalted(computer);
+      runComputer(computer);
       if (computer.memory[0] === 19690720) {
         return noun * 100 + verb;
       }

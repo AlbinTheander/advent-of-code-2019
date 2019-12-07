@@ -5,6 +5,7 @@ export type Computer = {
   input: number[];
   output: number[];
   halted: boolean;
+  waitingForInput: boolean;
 };
 
 export function createComputer(program: Program, input: number[] = []): Computer {
@@ -13,7 +14,8 @@ export function createComputer(program: Program, input: number[] = []): Computer
     ip: 0,
     input,
     output: [],
-    halted: false
+    halted: false,
+    waitingForInput: false
   };
 }
 
@@ -61,8 +63,13 @@ export function step(computer: Computer): void {
       break;
     }
     case IN: {
-      const a = read(IMMEDIATE);
-      computer.memory[a] = computer.input.shift();
+      if (computer.input.length > 0) {
+        const a = read(IMMEDIATE);
+        computer.memory[a] = computer.input.shift();
+      } else {
+        computer.ip--;
+        computer.waitingForInput = true;
+      }
       break;
     }
     case OUT: {
@@ -105,6 +112,13 @@ export function step(computer: Computer): void {
   }
 }
 
-export function runUntilHalted(computer: Computer): void {
-  while (!computer.halted) step(computer);
+/**
+ * Will run the computer until it's halted or need more input.
+ * @param computer
+ */
+export function runComputer(computer: Computer): void {
+  // Reset input flag if there is any available
+  if (computer.waitingForInput && computer.input.length > 0) computer.waitingForInput = false;
+
+  while (!computer.halted && !computer.waitingForInput) step(computer);
 }

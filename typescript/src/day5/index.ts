@@ -1,5 +1,5 @@
 import { readData } from '../util/file';
-import { createComputer, runUntilHalted, Program } from '../intcode';
+import { createComputer, runComputer, Program } from '../intcode';
 
 function parseData(s: string): number[] {
   return s.match(/[-\d]+/g).map(Number);
@@ -7,13 +7,13 @@ function parseData(s: string): number[] {
 
 function part1(program: Program): number {
   const computer = createComputer(program, [1]);
-  runUntilHalted(computer);
+  runComputer(computer);
   return computer.output.pop();
 }
 
 function part2(program: Program): number {
   const computer = createComputer(program, [5]);
-  runUntilHalted(computer);
+  runComputer(computer);
   return computer.output.pop();
 }
 export default function run(): void {

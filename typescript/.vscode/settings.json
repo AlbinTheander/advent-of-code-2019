@@ -6,5 +6,6 @@
         {"language":  "typescript",  "autoFix":  true  },
         {"language":  "typescriptreact",  "autoFix":  true  }
     ],
-    "jestrunner.jestCommand": "ts-jest"
+    "jestrunner.jestCommand": "ts-jest",
+    "typescript.preferences.importModuleSpecifier": "relative"
 }
