@@ -2,6 +2,7 @@ export type Program = number[];
 export type Computer = {
   memory: number[];
   ip: number;
+  base: number;
   input: number[];
   output: number[];
   halted: boolean;
@@ -12,6 +13,7 @@ export function createComputer(program: Program, input: number[] = []): Computer
   return {
     memory: program,
     ip: 0,
+    base: 0,
     input,
     output: [],
     halted: false,
@@ -27,15 +29,28 @@ const JT = 5;
 const JF = 6;
 const LT = 7;
 const EQ = 8;
+const BASE = 9;
 const HALT = 99;
 
 const POSITION = 0;
 const IMMEDIATE = 1;
+const RELATIVE = 2;
 
 export function step(computer: Computer): void {
   const read = (mode: number = POSITION): number => {
     const n = computer.memory[computer.ip++];
-    return mode === IMMEDIATE ? n : computer.memory[n];
+    switch (mode) {
+      case IMMEDIATE:
+        return n;
+      case RELATIVE:
+        return computer.memory[n + computer.base] || 0;
+      default:
+        return computer.memory[n] || 0;
+    }
+  };
+  const store = (adr: number, value: number, mode: number = POSITION): void => {
+    const target = mode === RELATIVE ? adr + computer.base : adr;
+    computer.memory[target] = value;
   };
 
   const instr = read(IMMEDIATE);
@@ -52,20 +67,20 @@ export function step(computer: Computer): void {
       const a = read(modes[0]);
       const b = read(modes[1]);
       const c = read(IMMEDIATE);
-      computer.memory[c] = a + b;
+      store(c, a + b, modes[2]);
       break;
     }
     case MUL: {
       const a = read(modes[0]);
       const b = read(modes[1]);
       const c = read(IMMEDIATE);
-      computer.memory[c] = a * b;
+      store(c, a * b, modes[2]);
       break;
     }
     case IN: {
       if (computer.input.length > 0) {
         const a = read(IMMEDIATE);
-        computer.memory[a] = computer.input.shift();
+        store(a, computer.input.shift(), modes[0]);
       } else {
         computer.ip--;
         computer.waitingForInput = true;
@@ -93,14 +108,19 @@ export function step(computer: Computer): void {
       const a = read(modes[0]);
       const b = read(modes[1]);
       const c = read(IMMEDIATE);
-      computer.memory[c] = a < b ? 1 : 0;
+      store(c, a < b ? 1 : 0, modes[2]);
       break;
     }
     case EQ: {
       const a = read(modes[0]);
       const b = read(modes[1]);
       const c = read(IMMEDIATE);
-      computer.memory[c] = a === b ? 1 : 0;
+      store(c, a === b ? 1 : 0, modes[2]);
+      break;
+    }
+    case BASE: {
+      const a = read(modes[0]);
+      computer.base += a;
       break;
     }
     case HALT: {
