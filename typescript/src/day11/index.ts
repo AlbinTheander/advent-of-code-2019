@@ -33,6 +33,7 @@ function paint(program: Program, initialSquare: number): KeyedMap<Coord, number>
 }
 
 function toString(map: KeyedMap<Coord, number>): string {
+  // TODO: Add a proper entries method to KeyedMap
   const entries: number[][] = [...map.data.entries()].map(([coord, col]) =>
     coord
       .split(',')
@@ -49,10 +50,18 @@ function toString(map: KeyedMap<Coord, number>): string {
   return lines.map(line => line.join('')).join('\n');
 }
 
+function part1(program: Program): number {
+  const hull = paint(program, 0);
+  return hull.size;
+}
+
 export default function run(): void {
   const program = parseData(readData('day11.txt'));
-  const hull = paint(program, 0);
-  console.log(hull.data.size);
-  const hull2 = paint(program, 1);
-  console.log(toString(hull2));
+  const answer1 = part1(program);
+  const answer2 = toString(paint(program, 1));
+
+  console.log('-- Day 11');
+  console.log('The amount of hull panels painted is', answer1);
+  console.log('The final hull looks lik');
+  console.log(answer2);
 }

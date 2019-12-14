@@ -11,6 +11,10 @@ export class KeyedMap<KeyType, ValueType> {
     this.defaultValue = defaultValue;
   }
 
+  get size(): number {
+    return this.data.size;
+  }
+
   set(key: KeyType, value: ValueType): KeyedMap<KeyType, ValueType> {
     this.data.set(this.keyFn(key), value);
     return this;
