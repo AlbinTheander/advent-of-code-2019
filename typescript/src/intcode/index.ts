@@ -11,7 +11,7 @@ export type Computer = {
 
 export function createComputer(program: Program, input: number[] = []): Computer {
   return {
-    memory: program,
+    memory: program.slice(),
     ip: 0,
     base: 0,
     input,
