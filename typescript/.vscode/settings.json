@@ -7,5 +7,8 @@
         {"language":  "typescriptreact",  "autoFix":  true  }
     ],
     "jestrunner.jestCommand": "ts-jest",
-    "typescript.preferences.importModuleSpecifier": "relative"
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
 }
