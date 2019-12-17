@@ -64,10 +64,52 @@ function part2(program: Program): number {
   return computer.output.pop();
 }
 
+async function part2Animated(program: Program): Promise<void> {
+  const inputLines = [
+    'A,B,A,C,A,B,C,A,B,C',
+    'R,12,R,4,R,10,R,12',
+    'R,6,L,8,R,10',
+    'L,8,R,4,R,4,R,6'
+  ];
+  // First get the screen, like in part1 to find the size of the screen.
+  let computer = createComputer(program);
+  runComputer(computer);
+  const view = computer.output.map(d => String.fromCharCode(d)).join('');
+  const viewLength = view.length;
+
+  // Run everything up until it asks if it should the video or not.
+  computer = createComputer(program);
+  computer.memory[0] = 2;
+  const inputStr = inputLines.map(ins => ins + LF).join('');
+  computer.input = Array.from(inputStr).map(ch => ch.charCodeAt(0));
+  runComputer(computer);
+
+  // Throw away the output so far and answer "y" to show the video.
+  // Run the program to capture the video stream.
+  computer.output = [];
+  computer.input.push(...`y${LF}`.split('').map(ch => ch.charCodeAt(0)));
+  runComputer(computer);
+
+  // Show one screen at a time (cleaned up for a better viewing experience)
+  // Pause 100ms between each frame.
+  for (let i = 0; i < computer.output.length - 30; i += viewLength) {
+    const nextScreen = computer.output
+      .slice(i, i + viewLength)
+      .map(d => String.fromCharCode(d))
+      .join('')
+      .replace(/\./g, ' ')
+      .replace(/#/g, '.');
+    console.clear();
+    console.log(nextScreen);
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+}
+
 export default function run(): void {
   const program = parseData(readData('day17.txt'));
   const answer1 = part1(program);
   const answer2 = part2(program);
+  // part2Animated(program);
 
   console.log('-- Day 17');
   console.log('The sum of the intersection values is', answer1);
