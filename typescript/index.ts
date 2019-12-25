@@ -1,5 +1,6 @@
 async function runDay(day: number): Promise<void> {
   const module = await import(`./src/day${day}`);
+  console.log('');
   module.default();
 }
 
