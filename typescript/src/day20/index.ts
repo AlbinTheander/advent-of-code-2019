@@ -66,7 +66,42 @@ function findPortals(maze: Maze, start: string): [string, number][] {
 }
 
 function findDistance(maze: Maze): number {
-  const { grid, portals, portalCoords } = maze;
+  const { portals } = maze;
+  const portalMap = new Map<string, [string, number][]>();
+  for (const p of portals.keys()) {
+    portalMap.set(p, findPortals(maze, p));
+  }
+
+  const toCheck = new FPriorityQueue<{
+    portal: string;
+    distance: number;
+    path: string[];
+  }>(t => t.distance);
+  toCheck.add({ portal: 'AA-', distance: 0, path: ['AA-'] });
+  let rounds = 0;
+  while (!toCheck.empty() && rounds++ < 10000000) {
+    const { portal, distance, path } = toCheck.take();
+    if (portal.startsWith('ZZ')) {
+      // If we reached ZZ return the total distance
+      // (Remove 1, since we weren't suppose to go through the portal)
+      return distance - 1;
+    }
+    const nextPortals = portalMap.get(portal);
+    if (!nextPortals) continue;
+    for (const [nextPortal, nextDistance] of nextPortals) {
+      const otherSide = nextPortal.slice(0, 2) + (nextPortal.endsWith('+') ? '-' : '+');
+      toCheck.add({
+        portal: otherSide,
+        distance: distance + nextDistance + 1,
+        path: path.concat(nextPortal)
+      });
+    }
+  }
+  return -1;
+}
+
+function findRecursiveDistance(maze: Maze): number {
+  const { portals } = maze;
   const portalMap = new Map<string, [string, number][]>();
   for (const p of portals.keys()) {
     portalMap.set(p, findPortals(maze, p));
@@ -82,11 +117,10 @@ function findDistance(maze: Maze): number {
   let rounds = 0;
   while (!toCheck.empty() && rounds++ < 10000000) {
     const { portal, level, distance, path } = toCheck.take();
-    if (level < 0) console.log(portal, level, distance, path);
-    // console.log(portal, level, distance, path);
     if (portal.startsWith('ZZ')) {
-      // console.log('ZZ', level, distance, path);
-      if (level === -1) return distance;
+      // If we reached ZZ return the total distance
+      // (Remove 1, since we weren't suppose to go through the portal)
+      if (level === -1) return distance - 1;
     }
     const nextPortals = portalMap.get(portal);
     if (!nextPortals) continue;
@@ -106,48 +140,12 @@ function findDistance(maze: Maze): number {
 }
 
 export default function run(): void {
-  const data = `
-             Z L X W       C                 
-             Z P Q B       K                 
-  ###########.#.#.#.#######.###############  
-  #...#.......#.#.......#.#.......#.#.#...#  
-  ###.#.#.#.#.#.#.#.###.#.#.#######.#.#.###  
-  #.#...#.#.#...#.#.#...#...#...#.#.......#  
-  #.###.#######.###.###.#.###.###.#.#######  
-  #...#.......#.#...#...#.............#...#  
-  #.#########.#######.#.#######.#######.###  
-  #...#.#    F       R I       Z    #.#.#.#  
-  #.###.#    D       E C       H    #.#.#.#  
-  #.#...#                           #...#.#  
-  #.###.#                           #.###.#  
-  #.#....OA                       WB..#.#..ZH
-  #.###.#                           #.#.#.#  
-CJ......#                           #.....#  
-  #######                           #######  
-  #.#....CK                         #......IC
-  #.###.#                           #.###.#  
-  #.....#                           #...#.#  
-  ###.###                           #.#.#.#  
-XF....#.#                         RF..#.#.#  
-  #####.#                           #######  
-  #......CJ                       NM..#...#  
-  ###.#.#                           #.###.#  
-RE....#.#                           #......RF
-  ###.###        X   X       L      #.#.#.#  
-  #.....#        F   Q       P      #.#.#.#  
-  ###.###########.###.#######.#########.###  
-  #.....#...#.....#.......#...#.....#.#...#  
-  #####.#.###.#######.#######.###.###.#.#.#  
-  #.......#.......#.#.#.#.#...#...#...#.#.#  
-  #####.###.#####.#.#.#.#.###.###.#.###.###  
-  #.......#.....#.#...#...............#...#  
-  #############.#.#.###.###################  
-               A O F   N                     
-               A A D   M                     `;
-  const data2 = readData('day20.txt');
-  // console.log(data);
-  const maze = parseData(data2);
+  const data = readData('day20.txt');
+  const maze = parseData(data);
   const answer1 = findDistance(maze);
+  const answer2 = findRecursiveDistance(maze);
+
   console.log('-- Day 20');
   console.log('Distance to ZZ is', answer1);
+  console.log('The recursive space distance to ZZ is', answer2);
 }
